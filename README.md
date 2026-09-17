@@ -1,2 +1,2 @@
-# RAG_ReactUI
+# RAG-React-App
 
