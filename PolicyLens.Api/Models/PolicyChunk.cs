@@ -16,6 +16,6 @@ public sealed class PolicyChunk
     [VectorStoreData]
     public required string Text { get; set; }
 
-    [VectorStoreVector(1536, DistanceFunction = DistanceFunction.CosineSimilarity)]
+    [VectorStoreVector(1536, DistanceFunction = DistanceFunction.CosineDistance)]
     public ReadOnlyMemory<float> Embedding { get; set; }
 }

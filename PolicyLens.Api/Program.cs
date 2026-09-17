@@ -1,5 +1,6 @@
 using Microsoft.Extensions.AI;
 using OpenAI;
+using PolicyLens.Api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,11 @@ var embeddingModel = builder.Configuration["OpenAI:EmbeddingModel"] ?? "text-emb
 var openAiClient = new OpenAIClient(openAiApiKey);
 builder.Services.AddSingleton(openAiClient);
 builder.Services.AddEmbeddingGenerator(openAiClient.GetEmbeddingClient(embeddingModel).AsIEmbeddingGenerator());
+
+var vectorDbPath = Path.Combine(builder.Environment.ContentRootPath, "policylens.db");
+builder.Services.AddSqliteCollection<string, PolicyChunk>(
+    "policy_chunks",
+    connectionString: $"Data Source={vectorDbPath}");
 
 var app = builder.Build();
 
