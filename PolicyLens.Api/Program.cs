@@ -1,4 +1,5 @@
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.VectorData;
 using OpenAI;
 using PolicyLens.Api.Models;
 using PolicyLens.Api.Services;
@@ -17,12 +18,12 @@ builder.Services.AddSingleton(openAiClient);
 builder.Services.AddEmbeddingGenerator(openAiClient.GetEmbeddingClient(embeddingModel).AsIEmbeddingGenerator());
 
 var vectorDbPath = Path.Combine(builder.Environment.ContentRootPath, "policylens.db");
-builder.Services.AddSqliteCollection<string, PolicyChunk>(
-    "policy_chunks",
-    connectionString: $"Data Source={vectorDbPath}");
+builder.Services.AddSingleton<VectorStoreCollection<string, PolicyChunk>>(
+    new SqlitePolicyChunkCollection($"Data Source={vectorDbPath}", "policy_chunks"));
 
 builder.Services.AddSingleton<PdfIngestionService>();
 builder.Services.AddScoped<VectorStoreSeeder>();
+builder.Services.AddScoped<PolicyRetrievalService>();
 
 var app = builder.Build();
 
