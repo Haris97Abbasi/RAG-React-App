@@ -1,6 +1,7 @@
 using Microsoft.Extensions.AI;
 using OpenAI;
 using PolicyLens.Api.Models;
+using PolicyLens.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,9 @@ builder.Services.AddSqliteCollection<string, PolicyChunk>(
     "policy_chunks",
     connectionString: $"Data Source={vectorDbPath}");
 
+builder.Services.AddSingleton<PdfIngestionService>();
+builder.Services.AddScoped<VectorStoreSeeder>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -28,5 +32,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<VectorStoreSeeder>();
+    await seeder.SeedAsync();
+}
 
 app.Run();
