@@ -1,6 +1,49 @@
-@PolicyLens.Api_HostAddress = http://localhost:5143
+@PolicyLens.Api_HostAddress = http://localhost:5299
 
-GET {{PolicyLens.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### 1. How many days can I work from another country?
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
 
-###
+{
+  "question": "How many days can I work from another country?"
+}
+
+### 2. Can I use public Wi-Fi while working remotely?
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
+
+{
+  "question": "Can I use public Wi-Fi while working remotely?"
+}
+
+### 3. What should I do if my company laptop is stolen?
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
+
+{
+  "question": "What should I do if my company laptop is stolen?"
+}
+
+### 4. Does the company pay for home internet?
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
+
+{
+  "question": "Does the company pay for home internet?"
+}
+
+### 5. What company car can I buy? (expect: policy does not contain this information, no invented sources)
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
+
+{
+  "question": "What company car can I buy?"
+}
+
+### Edge case: empty question should return 400
+POST {{PolicyLens.Api_HostAddress}}/api/ask
+Content-Type: application/json
+
+{
+  "question": ""
+}
