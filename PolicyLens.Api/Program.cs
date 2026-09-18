@@ -6,6 +6,15 @@ using PolicyLens.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+const string ReactDevCorsPolicy = "ReactDev";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(ReactDevCorsPolicy, policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
+
 builder.Services.AddOpenApi();
 
 var openAiApiKey = builder.Configuration["OpenAI:ApiKey"]
@@ -36,6 +45,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(ReactDevCorsPolicy);
 
 using (var scope = app.Services.CreateScope())
 {
