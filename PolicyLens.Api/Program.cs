@@ -43,4 +43,22 @@ using (var scope = app.Services.CreateScope())
     await seeder.SeedAsync();
 }
 
+app.MapPost("/api/ask", async (
+    AskRequest request,
+    PolicyRetrievalService retrieval,
+    PolicyAnsweringAgent agent,
+    CancellationToken cancellationToken) =>
+{
+    if (string.IsNullOrWhiteSpace(request.Question))
+    {
+        return Results.BadRequest("Question must not be empty.");
+    }
+
+    var chunks = await retrieval.RetrieveTopChunksAsync(request.Question, top: 3, cancellationToken);
+    var answer = await agent.AnswerAsync(request.Question, chunks, cancellationToken);
+    var sources = chunks.Select(c => c.SectionTitle).ToList();
+
+    return Results.Ok(new AskResponse(answer, sources));
+});
+
 app.Run();
