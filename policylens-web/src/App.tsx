@@ -1,10 +1,6 @@
 import { useState } from 'react'
+import { askQuestion } from './api'
 import './App.css'
-
-interface AskResponse {
-  answer: string
-  sources: string[]
-}
 
 function App() {
   const [question, setQuestion] = useState('')
@@ -22,17 +18,7 @@ function App() {
     setSources([])
 
     try {
-      const response = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
-      })
-
-      if (!response.ok) {
-        throw new Error(`Request failed (${response.status})`)
-      }
-
-      const data: AskResponse = await response.json()
+      const data = await askQuestion(question)
       setAnswer(data.answer)
       setSources(data.sources)
     } catch (err) {
